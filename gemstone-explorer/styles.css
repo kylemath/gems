@@ -1,0 +1,1118 @@
+/* ==========================================================================
+   Gemstone Explorer - Dark Theme Stylesheet
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   CSS Custom Properties (Design Tokens)
+   -------------------------------------------------------------------------- */
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #1c2129;
+  --bg-card: #21262d;
+  --border: #30363d;
+  --text-primary: #e6edf3;
+  --text-secondary: #b1bac4;
+  --text-muted: #7d8590;
+  --accent-blue: #58a6ff;
+  --accent-green: #3fb950;
+  --accent-red: #f85149;
+  --accent-orange: #d29922;
+  --accent-purple: #bc8cff;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --radius-card: 8px;
+  --radius-btn: 6px;
+  --radius-modal: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   Global Reset & Base
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 14px;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  height: 100vh;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   App Layout
+   -------------------------------------------------------------------------- */
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 20px;
+  flex-shrink: 0;
+}
+
+.app-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--accent-blue);
+  margin-bottom: 2px;
+}
+
+.app-subtitle {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.app-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   Tab Bar
+   -------------------------------------------------------------------------- */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  padding: 0 20px;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  padding: 10px 18px;
+  font-size: 0.85rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tab-btn:hover {
+  color: var(--text-secondary);
+}
+
+.tab-btn.active {
+  color: var(--accent-blue);
+  border-bottom-color: var(--accent-blue);
+}
+
+.tab-content {
+  display: none;
+}
+
+/* Higher specificity so .content { display:flex } (defined below) doesn't override */
+.app .tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: flex;
+  flex-direction: column;
+}
+
+.app .tab-content.active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar
+   -------------------------------------------------------------------------- */
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 12px 16px;
+}
+
+.sidebar-header h2 {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.search-input {
+  width: 100%;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  padding: 8px 12px;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+}
+
+.gem-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 8px;
+}
+
+.gem-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-card);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  border: 1px solid transparent;
+}
+
+.gem-card:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border);
+}
+
+.gem-card.active {
+  background: var(--bg-tertiary);
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.15);
+}
+
+.gem-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.gem-swatch-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  object-fit: cover;
+}
+
+.gem-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.gem-card-name {
+  font-weight: 500;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gem-card-formula {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+}
+
+.gem-card-ri {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  background: var(--bg-tertiary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Content Area
+   -------------------------------------------------------------------------- */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px;
+}
+
+/* Properties tab: viz + fingerprint (left) and scrollable stats supercard (right) */
+.properties-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.properties-main-column {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.properties-stats-supercard {
+  flex: 0 0 min(360px, 34vw);
+  max-width: 400px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.properties-stats-supercard .panel-header {
+  flex-shrink: 0;
+}
+
+.properties-stats-supercard .properties-grid {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  padding: 10px 12px 12px;
+  padding-top: 8px;
+}
+
+.viz-row {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+}
+
+.viz-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.viz-panel .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.viz-panel .panel-header h3 {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.panel-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.viz-panel canvas {
+  flex: 1;
+  width: 100%;
+  display: block;
+  transition: opacity 0.2s;
+}
+
+.crystal-panel {
+  align-items: center;
+}
+
+.crystal-panel canvas {
+  flex: 1 1 0;
+  width: auto;
+  aspect-ratio: 1;
+  max-width: 100%;
+}
+
+.panel-btn {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 4px 10px;
+  border-radius: var(--radius-btn);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--font-sans);
+}
+
+.panel-btn:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.panel-btn.active {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+/* --------------------------------------------------------------------------
+   Gem Image Gallery
+   -------------------------------------------------------------------------- */
+.gem-images-row {
+  display: flex;
+  gap: 12px;
+  padding-top: 12px;
+  flex-shrink: 0;
+}
+
+.gem-image-card {
+  flex: 1;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.gem-image-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.gem-image-header h4 {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.gem-image-caption {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.gem-image-wrap {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--bg-primary);
+  border-radius: 6px;
+}
+
+.gem-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+  transition: opacity 0.3s;
+}
+
+.gem-image.loaded {
+  display: block;
+}
+
+.gem-image-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--text-muted);
+  transition: opacity 0.3s;
+}
+
+.gem-image-placeholder.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.placeholder-icon {
+  font-size: 2rem;
+  opacity: 0.3;
+}
+
+.placeholder-text {
+  font-size: 0.75rem;
+}
+
+.gem-image-source {
+  display: block;
+  padding: 4px 14px 6px;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-top: 1px solid var(--border);
+  transition: color 0.15s;
+}
+
+.gem-image-source:hover {
+  color: var(--accent-blue);
+}
+
+
+/* --------------------------------------------------------------------------
+   Properties Grid
+   -------------------------------------------------------------------------- */
+.properties-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+  padding-top: 12px;
+  flex-shrink: 0;
+  max-height: 45%;
+  overflow-y: auto;
+}
+
+.prop-card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  padding: 14px;
+}
+
+.prop-card h4 {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.prop-card-polished .prop-card-polished-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.prop-card-polished .gem-image-wrap {
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+  position: relative;
+  margin: 0;
+  border-radius: 6px;
+}
+
+.prop-card-polished .gem-image-wrap .gem-image,
+.prop-card-polished .gem-image-wrap .gem-image-placeholder {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.prop-card-polished .gem-image-caption {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+}
+
+.prop-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+  font-size: 0.85rem;
+}
+
+.prop-label {
+  color: var(--text-muted);
+}
+
+.prop-value {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  text-align: right;
+}
+
+.prop-value.highlight {
+  color: var(--accent-blue);
+}
+
+.prop-value.yes {
+  color: var(--accent-green);
+}
+
+.prop-value.no {
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.prop-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+.badge-green {
+  background: rgba(63, 185, 80, 0.15);
+  color: var(--accent-green);
+}
+
+.badge-red {
+  background: rgba(248, 81, 73, 0.15);
+  color: var(--accent-red);
+}
+
+.badge-blue {
+  background: rgba(88, 166, 255, 0.15);
+  color: var(--accent-blue);
+}
+
+.badge-orange {
+  background: rgba(210, 153, 34, 0.15);
+  color: var(--accent-orange);
+}
+
+/* --------------------------------------------------------------------------
+   Experiment Layout
+   -------------------------------------------------------------------------- */
+.experiment-layout {
+  display: flex;
+  flex: 1;
+  gap: 12px;
+  min-height: 0;
+}
+
+.experiment-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.experiment-panel {
+  flex: 1;
+}
+
+.screen-panels {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+  min-height: 200px;
+  max-height: 400px;
+}
+
+.screen-panel {
+  flex: 1;
+  min-width: 0;
+}
+
+.screen-panel canvas {
+  background: #0d1117;
+  aspect-ratio: 1;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0 auto;
+  display: block;
+}
+
+.cell-stats-panel {
+  flex: 1;
+  min-width: 300px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.cell-stats-grid {
+  flex: 1;
+  overflow: hidden;
+  display: grid;
+  gap: 4px;
+  padding: 4px;
+}
+
+.cell-stat {
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  padding: 1px;
+  overflow: hidden;
+  min-height: 0;
+  min-width: 0;
+}
+
+.cell-spectra-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+}
+
+.cell-stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cell-stat-name {
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cell-stat-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.cell-stat-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-card);
+  margin: 3px 0;
+  overflow: hidden;
+  display: flex;
+}
+
+.cell-stat-bar-t {
+  background: var(--accent-green);
+  height: 100%;
+  transition: width 0.3s;
+}
+
+.cell-stat-bar-r {
+  background: var(--accent-blue);
+  height: 100%;
+  transition: width 0.3s;
+}
+
+.cell-stat-bar-a {
+  background: var(--accent-red);
+  height: 100%;
+  transition: width 0.3s;
+}
+
+.cell-stat-row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.cell-stat-row .val {
+  color: var(--text-primary);
+}
+
+.cell-stat-row .val-green { color: var(--accent-green); }
+.cell-stat-row .val-blue { color: var(--accent-blue); }
+.cell-stat-row .val-red { color: var(--accent-red); }
+
+.experiment-controls {
+  width: 260px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-group {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  padding: 14px;
+}
+
+.control-group h4 {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.control-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.slider-row input[type="range"] {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+}
+
+.slider-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  cursor: pointer;
+  border: 2px solid var(--bg-primary);
+}
+
+.slider-row input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  cursor: pointer;
+  border: 2px solid var(--bg-primary);
+}
+
+.slider-val {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  min-width: 50px;
+  text-align: right;
+}
+
+.wavelength-bar {
+  height: 8px;
+  border-radius: 4px;
+  margin-top: 6px;
+  background: linear-gradient(to right,
+    #7700ff, #0000ff, #00aaff, #00ff00, #aaff00, #ffff00, #ff8800, #ff0000
+  );
+  position: relative;
+}
+
+.spectrum-bar-extended {
+  height: 10px;
+  border-radius: 4px;
+  margin-top: 6px;
+  background: linear-gradient(to right,
+    #2a0040 0%,
+    #3d0066 5%,
+    #6600aa 10%,
+    #7700ff 10%,
+    #0000ff 15%,
+    #00aaff 22%,
+    #00ff00 30%,
+    #aaff00 38%,
+    #ffff00 42%,
+    #ff8800 50%,
+    #ff0000 55%,
+    #990000 65%,
+    #660000 75%,
+    #330000 85%,
+    #1a0000 100%
+  );
+  position: relative;
+  border: 1px solid var(--border);
+}
+
+.spd-preview {
+  height: 24px;
+  border-radius: 4px;
+  margin-top: 6px;
+  border: 1px solid var(--border);
+  background: #0d1117;
+  position: relative;
+  overflow: hidden;
+}
+
+.control-hint {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 6px;
+}
+
+.thermal-stats-block {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.thermal-stats-block .prop-row {
+  font-size: 0.78rem;
+}
+
+.thermal-stats-block .prop-val {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.btn-group {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.btn-group .panel-btn {
+  flex: 1;
+  text-align: center;
+}
+
+.thickness-presets {
+  display: flex;
+  gap: 3px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.preset-btn {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.preset-btn:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--accent-blue);
+}
+
+.gem-grid-picker {
+  display: grid;
+  gap: 3px;
+  margin-top: 6px;
+}
+
+.gem-grid-picker .grid-cell {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  transition: border-color 0.15s, background 0.15s;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 2px;
+}
+
+.gem-grid-picker .grid-cell:hover {
+  border-color: var(--accent-blue);
+}
+
+.gem-grid-picker .grid-cell.assigned {
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* --------------------------------------------------------------------------
+   Scrollbar Styling
+   -------------------------------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #484f58;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* --------------------------------------------------------------------------
+   Animations
+   -------------------------------------------------------------------------- */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Utility Classes
+   -------------------------------------------------------------------------- */
+.hidden {
+  display: none;
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --------------------------------------------------------------------------
+   Experiment Mode — Narrow Sidebar
+   -------------------------------------------------------------------------- */
+.app.experiment-mode .sidebar {
+  width: 130px;
+}
+
+.app.experiment-mode .sidebar-header {
+  padding: 8px 10px;
+}
+
+.app.experiment-mode .sidebar-header h2 {
+  display: none;
+}
+
+.app.experiment-mode .search-input {
+  font-size: 0.78rem;
+  padding: 5px 8px;
+}
+
+.app.experiment-mode .gem-card {
+  padding: 6px 8px;
+  gap: 6px;
+}
+
+.app.experiment-mode .gem-card-formula,
+.app.experiment-mode .gem-card-ri {
+  display: none;
+}
+
+.app.experiment-mode .gem-swatch,
+.app.experiment-mode .gem-swatch-img {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.app.experiment-mode .gem-card-name {
+  font-size: 0.78rem;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 1000px) {
+  .viz-row {
+    flex-direction: column;
+  }
+
+  .properties-layout {
+    flex-direction: column;
+  }
+
+  .properties-stats-supercard {
+    flex: none;
+    max-width: none;
+    width: 100%;
+    min-height: 240px;
+    max-height: min(55vh, 520px);
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .properties-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .app-body {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+  }
+
+  .gem-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 8px;
+  }
+
+  .gem-card {
+    flex: 0 0 calc(50% - 8px);
+    min-width: 140px;
+  }
+}

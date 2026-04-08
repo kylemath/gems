@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemstone Explorer - Manual Test Instructions</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #0d1117;
+      color: #e6edf3;
+      line-height: 1.6;
+    }
+    h1 { color: #58a6ff; border-bottom: 2px solid #30363d; padding-bottom: 10px; }
+    h2 { color: #3fb950; margin-top: 30px; }
+    h3 { color: #d29922; }
+    .test-step {
+      background: #161b22;
+      border-left: 4px solid #58a6ff;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 6px;
+    }
+    .checklist {
+      background: #161b22;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 15px 0;
+    }
+    .checklist label {
+      display: block;
+      padding: 8px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .checklist label:hover {
+      background: #21262d;
+    }
+    .checklist input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+    .status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.9em;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    .status.pass { background: #1a7f37; color: white; }
+    .status.fail { background: #cf222e; color: white; }
+    .status.pending { background: #6e7681; color: white; }
+    .button {
+      display: inline-block;
+      background: #238636;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      margin: 10px 10px 10px 0;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .button:hover {
+      background: #2ea043;
+    }
+    .button.secondary {
+      background: #21262d;
+      border: 1px solid #30363d;
+    }
+    .button.secondary:hover {
+      background: #30363d;
+    }
+    code {
+      background: #21262d;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Monaco', 'Courier New', monospace;
+      color: #ff7b72;
+    }
+    .note {
+      background: #1c2128;
+      border-left: 4px solid #d29922;
+      padding: 12px;
+      margin: 15px 0;
+      border-radius: 6px;
+    }
+    .success {
+      background: #0d1117;
+      border: 2px solid #1a7f37;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 6px;
+    }
+    #results {
+      margin-top: 30px;
+      padding: 20px;
+      background: #161b22;
+      border-radius: 6px;
+      display: none;
+    }
+    .result-item {
+      padding: 8px;
+      margin: 5px 0;
+      border-radius: 4px;
+    }
+    .result-pass { background: #1a7f37; }
+    .result-fail { background: #cf222e; }
+  </style>
+</head>
+<body>
+  <h1>🔬 Gemstone Explorer - Manual Test Instructions</h1>
+  
+  <div class="note">
+    <strong>📋 Test Objective:</strong> Verify that the Gemstone Explorer app loads without JavaScript errors and that the Temperature control section is visible and functional.
+  </div>
+
+  <a href="http://localhost:8765" target="_blank" class="button">🚀 Open Gemstone Explorer</a>
+  <button onclick="window.open('http://localhost:8765', '_blank'); startTest();" class="button">🧪 Open & Start Test</button>
+  <button onclick="location.reload()" class="button secondary">🔄 Reset Test</button>
+
+  <h2>📝 Test Steps</h2>
+
+  <div class="test-step">
+    <h3>Step 1: Open the Application</h3>
+    <p>Click the "Open Gemstone Explorer" button above or navigate to <code>http://localhost:8765</code></p>
+    <div class="checklist">
+      <label><input type="checkbox" id="check1a"> Page loads successfully</label>
+      <label><input type="checkbox" id="check1b"> No error messages appear</label>
+      <label><input type="checkbox" id="check1c"> Gem list appears on the left sidebar</label>
+      <label><input type="checkbox" id="check1d"> Crystal structure and spectrum visualizations are visible</label>
+    </div>
+  </div>
+
+  <div class="test-step">
+    <h3>Step 2: Open Browser Developer Tools</h3>
+    <p>Press <code>F12</code> (Windows/Linux) or <code>Cmd+Option+I</code> (Mac) to open Developer Tools</p>
+    <div class="checklist">
+      <label><input type="checkbox" id="check2a"> Developer Tools panel opens</label>
+      <label><input type="checkbox" id="check2b"> Click on the "Console" tab</label>
+      <label><input type="checkbox" id="check2c"> Check for any red error messages (there should be none)</label>
+    </div>
+    <div class="note">
+      <strong>✅ Expected:</strong> No JavaScript errors in console. Some informational messages are OK.<br>
+      <strong>❌ Look for:</strong> Red error messages, "Uncaught" errors, "ReferenceError", "TypeError", etc.
+    </div>
+  </div>
+
+  <div class="test-step">
+    <h3>Step 3: Switch to Photon Experiment Tab</h3>
+    <p>Click the <code>Photon Experiment</code> tab at the top of the page</p>
+    <div class="checklist">
+      <label><input type="checkbox" id="check3a"> Tab switches successfully</label>
+      <label><input type="checkbox" id="check3b"> Experiment canvas appears in the center</label>
+      <label><input type="checkbox" id="check3c"> Control panels appear on the right sidebar</label>
+      <label><input type="checkbox" id="check3d"> Per-Crystal Photon Analysis grid appears on the left</label>
+    </div>
+  </div>
+
+  <div class="test-step">
+    <h3>Step 4: Locate Temperature Control Section</h3>
+    <p>Scroll down in the right sidebar to find the <strong>"Temperature"</strong> section</p>
+    <div class="checklist">
+      <label><input type="checkbox" id="check4a"> "Temperature" heading is visible</label>
+      <label><input type="checkbox" id="check4b"> "Enable thermal simulation" checkbox is present (should be checked)</label>
+      <label><input type="checkbox" id="check4c"> "Ambient Temperature" slider is visible</label>
+      <label><input type="checkbox" id="check4d"> "Beam Power Scale" slider is visible</label>
+      <label><input type="checkbox" id="check4e"> Thermal stats block shows: Peak Temp, Avg ΔRI, Band Gap Shift</label>
+    </div>
+    <div class="note">
+      <strong>📍 Location:</strong> The Temperature section should be between "Mechanical / Piezoelectric" and "Magnetic Field" sections.
+    </div>
+  </div>
+
+  <div class="test-step">
+    <h3>Step 5: Test Emit Burst Button</h3>
+    <p>Click the <code>Emit Burst</code> button in the experiment panel header</p>
+    <div class="checklist">
+      <label><input type="checkbox" id="check5a"> Photons appear and travel through the gem grid</label>
+      <label><input type="checkbox" id="check5b"> Statistics update (Active, Transmitted, Reflected, Absorbed counts)</label>
+      <label><input type="checkbox" id="check5c"> No errors appear in the console</label>
+    </div>
+  </div>
+
+  <div class="test-step">
+    <h3>Step 6: Test Continuous Emission</h3>
+    <p>Click the <code>Continuous</code> button to start continuous photon emission</p>
+    <div class="checklist">
+      <label><input type="checkbox" id="check6a"> Button text changes to "Stop Beam"</label>
+      <label><input type="checkbox" id="check6b"> Photons continuously stream through the gems</label>
+      <label><input type="checkbox" id="check6c"> Statistics continuously update</label>
+      <label><input type="checkbox" id="check6d"> Let it run for ~5 seconds, then check Temperature stats</label>
+    </div>
+  </div>
+
+  <div class="test-step">
+    <h3>Step 7: Verify Temperature Stats Update</h3>
+    <p>While continuous emission is running, observe the Temperature stats</p>
+    <div class="checklist">
+      <label><input type="checkbox" id="check7a"> "Peak Temp" value increases above 20.0°C</label>
+      <label><input type="checkbox" id="check7b"> "Avg ΔRI" value becomes non-zero</label>
+      <label><input type="checkbox" id="check7c"> "Band Gap Shift" value may change (can be small)</label>
+      <label><input type="checkbox" id="check7d"> Per-cell charts show temperature readouts (e.g., "25.3°C Δn=+2.1×10⁻⁶")</label>
+    </div>
+    <div class="note">
+      <strong>💡 Tip:</strong> Increase the "Beam Power Scale" slider to see faster temperature increases.<br>
+      <strong>🔍 Look for:</strong> Temperature values in the bottom-left of each cell in the Per-Crystal Analysis grid.
+    </div>
+  </div>
+
+  <div class="test-step">
+    <h3>Step 8: Test Temperature Controls</h3>
+    <p>Interact with the temperature controls to verify they work</p>
+    <div class="checklist">
+      <label><input type="checkbox" id="check8a"> Adjust "Ambient Temperature" slider - value updates</label>
+      <label><input type="checkbox" id="check8b"> Adjust "Beam Power Scale" slider - value updates with superscript notation</label>
+      <label><input type="checkbox" id="check8c"> Uncheck "Enable thermal simulation" - temperature effects should stop</label>
+      <label><input type="checkbox" id="check8d"> Re-check "Enable thermal simulation" - temperature effects resume</label>
+    </div>
+  </div>
+
+  <div class="test-step">
+    <h3>Step 9: Final Console Check</h3>
+    <p>Return to the Console tab in Developer Tools</p>
+    <div class="checklist">
+      <label><input type="checkbox" id="check9a"> No new JavaScript errors have appeared</label>
+      <label><input type="checkbox" id="check9b"> No "Uncaught" exceptions</label>
+      <label><input type="checkbox" id="check9c"> Application is still responsive</label>
+    </div>
+  </div>
+
+  <h2>📊 Test Results Summary</h2>
+  
+  <button onclick="generateReport()" class="button">📈 Generate Test Report</button>
+  
+  <div id="results"></div>
+
+  <h2>🎯 Expected Outcomes</h2>
+  
+  <div class="success">
+    <h3>✅ All Tests Should Pass:</h3>
+    <ul>
+      <li>✅ Page loads without JavaScript errors</li>
+      <li>✅ Temperature control section is visible in the Photon Experiment tab</li>
+      <li>✅ All temperature controls are present and functional</li>
+      <li>✅ Thermal stats update when photons are emitted</li>
+      <li>✅ Per-cell temperature displays appear in the analysis grid</li>
+      <li>✅ No console errors during normal operation</li>
+    </ul>
+  </div>
+
+  <h2>📚 Additional Information</h2>
+  
+  <div class="note">
+    <h3>🔬 Thermal Physics Features</h3>
+    <p>The thermal simulation includes:</p>
+    <ul>
+      <li><strong>Heat Capacity:</strong> Debye model with temperature-dependent specific heat</li>
+      <li><strong>Heating:</strong> Energy deposition from absorbed photons</li>
+      <li><strong>Cooling:</strong> Convection, radiation (Stefan-Boltzmann), and conduction</li>
+      <li><strong>Thermo-optic Effect:</strong> Refractive index changes with temperature</li>
+      <li><strong>Band Gap Shift:</strong> Varshni model for semiconductor behavior</li>
+      <li><strong>Fluorescence Quenching:</strong> Thermal quenching at high temperatures</li>
+      <li><strong>Pyroelectric Effect:</strong> Voltage generation in piezoelectric crystals</li>
+      <li><strong>Thermal Emission:</strong> Blackbody radiation at elevated temperatures</li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <h3>🐛 Troubleshooting</h3>
+    <p><strong>If the page doesn't load:</strong></p>
+    <ul>
+      <li>Verify the server is running on port 8765</li>
+      <li>Check the terminal for server errors</li>
+      <li>Try refreshing the page (Cmd+R or F5)</li>
+    </ul>
+    <p><strong>If temperature doesn't change:</strong></p>
+    <ul>
+      <li>Ensure "Enable thermal simulation" is checked</li>
+      <li>Increase "Beam Power Scale" to 10¹⁷ or 10¹⁸</li>
+      <li>Let continuous emission run for at least 5-10 seconds</li>
+      <li>Check that gems are assigned in the grid (not all empty)</li>
+    </ul>
+  </div>
+
+  <script>
+    let testStartTime = null;
+
+    function startTest() {
+      testStartTime = new Date();
+      document.getElementById('results').style.display = 'none';
+    }
+
+    function generateReport() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      const total = checkboxes.length;
+      const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+      const percentage = Math.round((checked / total) * 100);
+
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.style.display = 'block';
+      
+      let html = '<h3>Test Results</h3>';
+      html += `<p><strong>Completed:</strong> ${checked} / ${total} checks (${percentage}%)</p>`;
+      
+      if (percentage === 100) {
+        html += '<div class="result-item result-pass">✅ All tests passed! The application is working correctly.</div>';
+      } else if (percentage >= 80) {
+        html += '<div class="result-item" style="background: #d29922;">⚠️ Most tests passed. Review failed items.</div>';
+      } else {
+        html += '<div class="result-item result-fail">❌ Several tests failed. Check console for errors.</div>';
+      }
+
+      html += '<h4>Detailed Results:</h4>';
+      
+      const steps = [
+        { name: 'Step 1: Open Application', checks: ['check1a', 'check1b', 'check1c', 'check1d'] },
+        { name: 'Step 2: Developer Tools', checks: ['check2a', 'check2b', 'check2c'] },
+        { name: 'Step 3: Photon Experiment Tab', checks: ['check3a', 'check3b', 'check3c', 'check3d'] },
+        { name: 'Step 4: Temperature Controls', checks: ['check4a', 'check4b', 'check4c', 'check4d', 'check4e'] },
+        { name: 'Step 5: Emit Burst', checks: ['check5a', 'check5b', 'check5c'] },
+        { name: 'Step 6: Continuous Emission', checks: ['check6a', 'check6b', 'check6c', 'check6d'] },
+        { name: 'Step 7: Temperature Stats', checks: ['check7a', 'check7b', 'check7c', 'check7d'] },
+        { name: 'Step 8: Control Interaction', checks: ['check8a', 'check8b', 'check8c', 'check8d'] },
+        { name: 'Step 9: Final Console Check', checks: ['check9a', 'check9b', 'check9c'] }
+      ];
+
+      steps.forEach(step => {
+        const stepChecked = step.checks.filter(id => document.getElementById(id)?.checked).length;
+        const stepTotal = step.checks.length;
+        const stepPass = stepChecked === stepTotal;
+        const icon = stepPass ? '✅' : (stepChecked > 0 ? '⚠️' : '❌');
+        const className = stepPass ? 'result-pass' : (stepChecked > 0 ? '' : 'result-fail');
+        html += `<div class="result-item ${className}">${icon} ${step.name}: ${stepChecked}/${stepTotal}</div>`;
+      });
+
+      if (testStartTime) {
+        const duration = Math.round((new Date() - testStartTime) / 1000);
+        html += `<p style="margin-top: 15px; color: #7d8590;">Test duration: ${duration} seconds</p>`;
+      }
+
+      html += '<h4>Key Findings:</h4>';
+      html += '<ul>';
+      html += `<li>Page Load: ${document.getElementById('check1a')?.checked ? '✅ Success' : '❌ Failed'}</li>`;
+      html += `<li>No Console Errors: ${document.getElementById('check2c')?.checked ? '✅ Clean' : '❌ Errors Present'}</li>`;
+      html += `<li>Temperature Section Visible: ${document.getElementById('check4a')?.checked ? '✅ Yes' : '❌ No'}</li>`;
+      html += `<li>Temperature Stats Update: ${document.getElementById('check7a')?.checked ? '✅ Working' : '❌ Not Working'}</li>`;
+      html += '</ul>';
+
+      resultsDiv.innerHTML = html;
+    }
+
+    // Auto-save checkbox state
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        localStorage.setItem(cb.id, cb.checked);
+      });
+      // Restore state
+      if (localStorage.getItem(cb.id) === 'true') {
+        cb.checked = true;
+      }
+    });
+  </script>
+</body>
+</html>

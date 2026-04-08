@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemstone Explorer — Crystal Structure, Spectral Analysis &amp; Photon Simulation</title>
+  <link rel="stylesheet" href="styles.css?v=4">
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1 class="app-title">Gemstone Explorer</h1>
+      <p class="app-subtitle">Crystal structures, absorption spectra, material properties &amp; photon simulation — Caltech Mineral Spectroscopy, COD &amp; AMCSD</p>
+    </header>
+
+    <nav class="tab-bar" role="tablist">
+      <button class="tab-btn active" role="tab" data-tab="properties" aria-selected="true">Properties</button>
+      <button class="tab-btn" role="tab" data-tab="experiment" aria-selected="false">Photon Experiment</button>
+      <button class="tab-btn" role="tab" data-tab="nmr" aria-selected="false">NMR & Vibrational</button>
+    </nav>
+
+    <main class="app-body">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h2>Minerals</h2>
+          <input type="text" id="search-input" class="search-input" placeholder="Filter gems…" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="gem-list" id="gem-list"></div>
+      </aside>
+
+      <!-- Tab 1: Properties (crystal + spectra + data cards) -->
+      <div class="content tab-content active" id="tab-properties" role="tabpanel">
+        <div class="properties-layout">
+          <div class="properties-main-column">
+            <div class="viz-row">
+              <div class="viz-panel crystal-panel">
+                <div class="panel-header">
+                  <h3>Crystal Structure</h3>
+                  <div class="panel-controls">
+                    <button class="panel-btn" id="btn-reset-crystal" title="Reset view">Reset</button>
+                    <button class="panel-btn active" id="btn-auto-rotate" title="Toggle auto rotation">Auto Rotate</button>
+                  </div>
+                </div>
+                <canvas id="crystal-canvas"></canvas>
+              </div>
+
+              <div class="viz-panel spectra-panel">
+                <div class="panel-header">
+                  <h3>Absorption Spectrum</h3>
+                  <div class="panel-controls">
+                    <button class="panel-btn" id="btn-reset-spectra" title="Reset zoom">Reset Zoom</button>
+                    <button class="panel-btn active" id="btn-toggle-cursor" title="Toggle cursor crosshair">Cursor</button>
+                  </div>
+                </div>
+                <canvas id="spectra-canvas"></canvas>
+              </div>
+            </div>
+
+            <div class="viz-panel properties-fingerprint-panel" style="margin:0;min-height:200px;flex-shrink:0">
+              <div class="panel-header">
+                <h3>Structural Fingerprint</h3>
+                <div class="panel-controls">
+                  <span style="color:#7d8590;font-size:10px">predicted XRD reflections ↔ vibrational modes via crystal structure</span>
+                </div>
+              </div>
+              <canvas id="fingerprint-canvas" style="width:100%;height:210px"></canvas>
+            </div>
+          </div>
+
+          <div class="properties-stats-supercard viz-panel" aria-label="Material property cards">
+            <div class="panel-header">
+              <h3>Material Properties</h3>
+            </div>
+            <div class="properties-grid">
+              <div class="prop-card prop-card-polished">
+                <h4>Polished</h4>
+                <div class="prop-card-polished-body">
+                  <div class="gem-image-wrap" id="img-polished-wrap">
+                    <div class="gem-image-placeholder" id="img-polished-placeholder">
+                      <span class="placeholder-icon">&#9670;</span>
+                      <span class="placeholder-text">Loading…</span>
+                    </div>
+                  </div>
+                  <span class="gem-image-caption" id="img-polished-caption"></span>
+                </div>
+              </div>
+              <div class="prop-card">
+                <h4>Chemical</h4>
+                <div id="props-chemical"></div>
+              </div>
+              <div class="prop-card">
+                <h4>Optical</h4>
+                <div id="props-optical"></div>
+              </div>
+              <div class="prop-card">
+                <h4>Electrical</h4>
+                <div id="props-electrical"></div>
+              </div>
+              <div class="prop-card">
+                <h4>Spectral / Chromophore</h4>
+                <div id="props-spectral"></div>
+              </div>
+              <div class="prop-card">
+                <h4>Fluorescence</h4>
+                <div id="props-fluorescence"></div>
+              </div>
+              <div class="prop-card">
+                <h4>Thermal</h4>
+                <div id="props-thermal"></div>
+              </div>
+              <div class="prop-card">
+                <h4>Radiation Response</h4>
+                <div id="props-radiation"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Photon Experiment -->
+      <div class="content tab-content" id="tab-experiment" role="tabpanel">
+        <div class="experiment-layout">
+          <div class="viz-panel cell-stats-panel">
+            <div class="panel-header">
+              <h3>Per-Crystal Photon Analysis</h3>
+            </div>
+            <div id="cell-stats-grid" class="cell-stats-grid"></div>
+          </div>
+
+          <div class="experiment-main">
+            <div class="viz-panel experiment-panel" style="flex:2">
+              <div class="panel-header">
+                <h3>Photon Transmission Experiment</h3>
+                <div class="panel-controls">
+                  <button class="panel-btn" id="btn-emit" title="Emit photon burst">Emit Burst</button>
+                  <button class="panel-btn" id="btn-continuous" title="Toggle continuous beam">Continuous</button>
+                  <button class="panel-btn" id="btn-reset-experiment" title="Reset simulation">Reset</button>
+                </div>
+              </div>
+              <canvas id="experiment-canvas"></canvas>
+            </div>
+            <div class="screen-panels">
+              <div class="viz-panel screen-panel">
+                <div class="panel-header">
+                  <h3>Reflection Screen</h3>
+                  <div class="panel-controls">
+                    <button class="panel-btn active" id="btn-refl-mode-int" data-screen="reflection" data-mode="integrated">Integrated</button>
+                    <button class="panel-btn" id="btn-refl-mode-last" data-screen="reflection" data-mode="last">Last Burst</button>
+                  </div>
+                </div>
+                <canvas id="reflection-screen-canvas"></canvas>
+              </div>
+              <div class="viz-panel screen-panel">
+                <div class="panel-header">
+                  <h3>Transmission Screen</h3>
+                  <div class="panel-controls">
+                    <button class="panel-btn active" id="btn-trans-mode-int" data-screen="transmission" data-mode="integrated">Integrated</button>
+                    <button class="panel-btn" id="btn-trans-mode-last" data-screen="transmission" data-mode="last">Last Burst</button>
+                  </div>
+                </div>
+                <canvas id="transmission-screen-canvas"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="experiment-controls">
+            <div class="control-group">
+              <h4>Light Source</h4>
+              <div class="btn-group" style="flex-wrap:wrap">
+                <button class="panel-btn active" data-lightmode="mono">Mono</button>
+                <button class="panel-btn" data-lightmode="white">White</button>
+                <button class="panel-btn" data-lightmode="uv">UV</button>
+                <button class="panel-btn" data-lightmode="nir">Near IR</button>
+                <button class="panel-btn" data-lightmode="fir">Far IR</button>
+                <button class="panel-btn" data-lightmode="thz">THz</button>
+                <button class="panel-btn" data-lightmode="xray">X-ray</button>
+                <button class="panel-btn" data-lightmode="uraninite">Uraninite</button>
+                <button class="panel-btn" data-lightmode="gamma">Gamma</button>
+              </div>
+              <label class="control-label" id="source-select-control" style="display:none">
+                Source Spectrum
+                <select id="ctrl-light-source" class="search-input" style="padding:6px 8px;margin-top:4px">
+                  <option value="sun">Sunlight (D65, ~5500K)</option>
+                  <option value="candle">Candle (~1850K)</option>
+                  <option value="bulb">Incandescent Bulb (~2856K)</option>
+                  <option value="warm_led">Warm LED (~3000K)</option>
+                  <option value="cool_led">Cool LED (~6500K)</option>
+                </select>
+                <div class="spd-preview" id="spd-preview"></div>
+              </label>
+              <label class="control-label" id="wavelength-control">
+                Wavelength
+                <div class="slider-row">
+                  <input type="range" id="ctrl-wavelength" min="200" max="2000" value="550" step="1">
+                  <span class="slider-val" id="val-wavelength">550 nm</span>
+                </div>
+                <div class="spectrum-bar-extended" id="spectrum-bar-extended"></div>
+              </label>
+              <label class="control-label" id="xray-energy-control" style="display:none">
+                X-ray Energy
+                <div class="slider-row">
+                  <input type="range" id="ctrl-xray-energy" min="1" max="150" value="50" step="1">
+                  <span class="slider-val" id="val-xray-energy">50 keV</span>
+                </div>
+                <div class="thickness-presets">
+                  <button class="preset-btn" data-xray-preset="8">Cu Kα</button>
+                  <button class="preset-btn" data-xray-preset="17">Mo Kα</button>
+                  <button class="preset-btn" data-xray-preset="22">Ag Kα</button>
+                </div>
+              </label>
+              <label class="control-label" id="xrd-mode-control" style="display:none">
+                <div class="slider-row">
+                  <input type="checkbox" id="ctrl-xrd-mode">
+                  <span>Crystallography (collimated beam)</span>
+                </div>
+                <div class="slider-row" style="margin-top:4px">
+                  <input type="checkbox" id="ctrl-xrd-laue">
+                  <span>Laue mode (polychromatic beam)</span>
+                </div>
+                <div id="xrd-symmetry-info" class="thermal-stats-block" style="margin-top:6px;display:none"></div>
+              </label>
+              <label class="control-label" id="gamma-energy-control" style="display:none">
+                Gamma Energy
+                <div class="slider-row">
+                  <input type="range" id="ctrl-gamma-energy" min="100" max="5000" value="662" step="10">
+                  <span class="slider-val" id="val-gamma-energy">662 keV</span>
+                </div>
+              </label>
+              <label class="control-label" id="uraninite-distance-control" style="display:none">
+                Source Distance
+                <div class="slider-row">
+                  <input type="range" id="ctrl-source-dist" min="5" max="50" value="50" step="1">
+                  <span class="slider-val" id="val-source-dist">50 (Z=0)</span>
+                </div>
+                <p class="control-hint">Distance from uraninite face to gem grid center</p>
+              </label>
+              <label class="control-label" id="uraninite-collimation-control" style="display:none">
+                Collimation
+                <div class="slider-row">
+                  <input type="range" id="ctrl-collimation" min="0" max="100" value="0" step="1">
+                  <span class="slider-val" id="val-collimation">0% (natural)</span>
+                </div>
+                <p class="control-hint">0% = raw emission, 100% = fully collimated (lab tube)</p>
+                <div class="slider-row" style="margin-top:6px">
+                  <input type="checkbox" id="ctrl-uraninite-xrd">
+                  <span>Crystallography (Laue diffraction)</span>
+                </div>
+                <p class="control-hint">Enables Bragg diffraction — use ≥70% collimation for clear rings</p>
+                <div class="slider-row" style="margin-top:6px">
+                  <input type="checkbox" id="ctrl-backscatter-shield">
+                  <span>Backscatter shield (barite slab)</span>
+                </div>
+                <p class="control-hint">Absorbs X-rays reflected back from gem grid</p>
+              </label>
+              <label class="control-label" id="barite-control" style="display:none">
+                Barite Absorber Thickness
+                <div class="slider-row">
+                  <input type="range" id="ctrl-barite-thick" min="0" max="30" value="5" step="1">
+                  <span class="slider-val" id="val-barite-thick">5 mm</span>
+                </div>
+                <p class="control-hint">Beam rate ~5–50 simulates a typical high-activity uraninite specimen at close range</p>
+                <div id="uraninite-stats" class="thermal-stats-block" style="margin-top:6px">
+                  <div class="prop-row"><span class="prop-label">Source</span><span class="prop-val">Uraninite (UO₂)</span></div>
+                  <div class="prop-row"><span class="prop-label">Absorber</span><span class="prop-val">Barite (BaSO₄)</span></div>
+                  <div class="prop-row"><span class="prop-label">Emission</span><span class="prop-val">U Lα 13.6, Lβ 17.2, Kα 98.4 keV</span></div>
+                  <div class="prop-row"><span class="prop-label">Ba K-edge</span><span class="prop-val">37.4 keV</span></div>
+                  <div class="prop-row"><span class="prop-label">Ba density</span><span class="prop-val">4.48 g/cm³</span></div>
+                </div>
+              </label>
+              <label class="control-label" id="thz-freq-control" style="display:none">
+                THz Frequency
+                <div class="slider-row">
+                  <input type="range" id="ctrl-thz-freq" min="0.1" max="10" value="1.0" step="0.1">
+                  <span class="slider-val" id="val-thz-freq">1.0 THz</span>
+                </div>
+              </label>
+              <label class="control-label">
+                Burst Size
+                <div class="slider-row">
+                  <input type="range" id="ctrl-burst" min="5" max="100" value="30" step="5">
+                  <span class="slider-val" id="val-burst">30</span>
+                </div>
+              </label>
+              <label class="control-label">
+                Beam Rate (photons/frame)
+                <div class="slider-row">
+                  <input type="range" id="ctrl-beam-rate" min="0" max="1000" value="10" step="5">
+                  <span class="slider-val" id="val-beam-rate">5</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="control-group">
+              <h4>Gem Grid</h4>
+              <label class="control-label">
+                Grid Size
+                <div class="slider-row">
+                  <input type="range" id="ctrl-grid-size" min="1" max="4" value="4" step="1">
+                  <span class="slider-val" id="val-grid-size">4 × 4</span>
+                </div>
+              </label>
+              <label class="control-label">
+                Occluder Thickness
+                <div class="slider-row">
+                  <input type="range" id="ctrl-occluder" min="0.01" max="8" value="2" step="0.01">
+                  <span class="slider-val" id="val-occluder">2.0 mm</span>
+                </div>
+              </label>
+              <label class="control-label">
+                Gem Thickness
+                <div class="slider-row">
+                  <input type="range" id="ctrl-gem-thick" min="0.01" max="20" value="5" step="0.01">
+                  <span class="slider-val" id="val-gem-thick">5.00 mm</span>
+                </div>
+                <div class="thickness-presets">
+                  <button class="preset-btn" data-thick="0.03">30μm</button>
+                  <button class="preset-btn" data-thick="0.1">100μm</button>
+                  <button class="preset-btn" data-thick="0.5">0.5mm</button>
+                  <button class="preset-btn" data-thick="1">1mm</button>
+                  <button class="preset-btn" data-thick="5">5mm</button>
+                  <button class="preset-btn" data-thick="10">10mm</button>
+                </div>
+              </label>
+            </div>
+
+            <div class="control-group">
+              <h4>Surface Occluder</h4>
+              <label class="control-label">
+                Hebrew Letter Carving
+                <select id="ctrl-hebrew-letter" class="search-input" style="padding:6px 8px;margin-top:4px;font-size:16px">
+                  <option value="">None</option>
+                  <option value="א">א Alef</option>
+                  <option value="ב">ב Bet</option>
+                  <option value="ג">ג Gimel</option>
+                  <option value="ד">ד Dalet</option>
+                  <option value="ה">ה He</option>
+                  <option value="ו">ו Vav</option>
+                  <option value="ז">ז Zayin</option>
+                  <option value="ח">ח Chet</option>
+                  <option value="ט">ט Tet</option>
+                  <option value="י">י Yod</option>
+                  <option value="כ">כ Kaf</option>
+                  <option value="ל">ל Lamed</option>
+                  <option value="מ">מ Mem</option>
+                  <option value="נ">נ Nun</option>
+                  <option value="ס">ס Samekh</option>
+                  <option value="ע">ע Ayin</option>
+                  <option value="פ">פ Pe</option>
+                  <option value="צ">צ Tsade</option>
+                  <option value="ק">ק Qof</option>
+                  <option value="ר">ר Resh</option>
+                  <option value="ש">ש Shin</option>
+                  <option value="ת">ת Tav</option>
+                </select>
+              </label>
+              <label class="control-label">
+                Carving Depth
+                <div class="slider-row">
+                  <input type="range" id="ctrl-hebrew-depth" min="5" max="100" value="70" step="1">
+                  <span class="slider-val" id="val-hebrew-depth">70%</span>
+                </div>
+              </label>
+              <label class="control-label">
+                Letter Boldness
+                <div class="slider-row">
+                  <input type="range" id="ctrl-hebrew-bold" min="0" max="100" value="50" step="1">
+                  <span class="slider-val" id="val-hebrew-bold">50%</span>
+                </div>
+              </label>
+              <label class="control-label">
+                Letter Size
+                <div class="slider-row">
+                  <input type="range" id="ctrl-hebrew-size" min="20" max="100" value="66" step="1">
+                  <span class="slider-val" id="val-hebrew-size">66%</span>
+                </div>
+              </label>
+              <label class="control-label">
+                <div class="slider-row">
+                  <input type="checkbox" id="ctrl-phys-mod">
+                  <span>Physical Modulation</span>
+                </div>
+              </label>
+              <p class="control-hint">Gem-dependent: Z, density, absorption edges, magnetic dichroism, temperature, radiation damage, piezoelectric strain all modulate letter visibility per crystal</p>
+            </div>
+
+            <div class="control-group">
+              <h4>Gem Arrangement</h4>
+              <div class="gem-grid-picker" id="gem-grid-picker"></div>
+              <p class="control-hint">Click cells to assign the selected gem from the sidebar</p>
+            </div>
+
+            <div class="control-group">
+              <h4>Mechanical / Piezoelectric</h4>
+              <button class="panel-btn" id="btn-fire-bb" title="Fire BB at all crystals">Fire BB Shot</button>
+              <p class="control-hint">Generates piezoelectric voltage in crystals with piezo properties (quartz, amethyst)</p>
+            </div>
+
+            <div class="control-group">
+              <h4>Temperature</h4>
+              <label class="control-label">
+                <div class="slider-row">
+                  <input type="checkbox" id="ctrl-thermal-enable" checked>
+                  <span>Enable thermal simulation</span>
+                </div>
+              </label>
+              <label class="control-label">
+                Ambient Temperature
+                <div class="slider-row">
+                  <input type="range" id="ctrl-ambient-temp" min="-50" max="200" value="20" step="1">
+                  <span class="slider-val" id="val-ambient-temp">20°C</span>
+                </div>
+              </label>
+              <label class="control-label">
+                Beam Power Scale
+                <div class="slider-row">
+                  <input type="range" id="ctrl-photon-scale" min="12" max="18" value="15" step="0.5">
+                  <span class="slider-val" id="val-photon-scale">10¹⁵</span>
+                </div>
+                <p class="control-hint">Each sim photon represents 10ⁿ real photons</p>
+              </label>
+              <div id="thermal-stats" class="thermal-stats-block">
+                <div class="prop-row"><span class="prop-label">Peak Temp</span><span class="prop-val" id="stat-peak-temp">20.0°C</span></div>
+                <div class="prop-row"><span class="prop-label">Avg ΔRI</span><span class="prop-val" id="stat-avg-ri-shift">0</span></div>
+                <div class="prop-row"><span class="prop-label">Band Gap Shift</span><span class="prop-val" id="stat-bandgap-shift">0 eV</span></div>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <h4>Magnetic Field</h4>
+              <label class="control-label">
+                <div class="slider-row">
+                  <input type="checkbox" id="ctrl-mag-enable">
+                  <span>Enable B-field</span>
+                </div>
+              </label>
+              <label class="control-label">
+                Strength
+                <div class="slider-row">
+                  <input type="range" id="ctrl-mag-strength" min="0.1" max="45" value="1" step="0.1">
+                  <span class="slider-val" id="val-mag-strength">1.0 T</span>
+                </div>
+              </label>
+              <label class="control-label">
+                Direction
+                <select id="ctrl-mag-dir" class="search-input" style="padding:6px 8px">
+                  <option value="down">Down (−Y)</option>
+                  <option value="up">Up (+Y)</option>
+                  <option value="into">Into grid (+Z)</option>
+                  <option value="out">Out of grid (−Z)</option>
+                  <option value="left">Left (−X)</option>
+                  <option value="right">Right (+X)</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="control-group">
+              <h4>Radioactive Source</h4>
+              <label class="control-label">
+                <div class="slider-row">
+                  <input type="checkbox" id="ctrl-radio-enable">
+                  <span>Enable source</span>
+                </div>
+              </label>
+              <label class="control-label">
+                Isotope
+                <select id="ctrl-radio-isotope" class="search-input" style="padding:6px 8px;margin-top:4px">
+                  <option value="Co60">⁶⁰Co — γ (1.17, 1.33 MeV)</option>
+                  <option value="Cs137" selected>¹³⁷Cs — γ (662 keV)</option>
+                  <option value="Am241">²⁴¹Am — α + γ (5.5 MeV α, 60 keV γ)</option>
+                  <option value="Ra226">²²⁶Ra — α + γ (4.8 MeV α)</option>
+                  <option value="Sr90">⁹⁰Sr — β (546 keV)</option>
+                  <option value="I131">¹³¹I — β + γ (606 keV β, 364 keV γ)</option>
+                  <option value="Ir192">¹⁹²Ir — γ (316, 468 keV)</option>
+                  <option value="Cf252">²⁵²Cf — neutron (2.1 MeV avg)</option>
+                </select>
+              </label>
+              <label class="control-label">
+                Activity
+                <div class="slider-row">
+                  <input type="range" id="ctrl-radio-activity" min="3" max="12" value="6" step="0.5">
+                  <span class="slider-val" id="val-radio-activity">10⁶ Bq</span>
+                </div>
+              </label>
+              <label class="control-label">
+                Distance
+                <div class="slider-row">
+                  <input type="range" id="ctrl-radio-distance" min="0.01" max="2" value="0.1" step="0.01">
+                  <span class="slider-val" id="val-radio-distance">10 cm</span>
+                </div>
+              </label>
+              <div id="radiation-stats" class="thermal-stats-block">
+                <div class="prop-row"><span class="prop-label">Dose Rate</span><span class="prop-val" id="stat-dose-rate">0 Gy/s</span></div>
+                <div class="prop-row"><span class="prop-label">Total Dose</span><span class="prop-val" id="stat-total-dose">0 Gy</span></div>
+                <div class="prop-row"><span class="prop-label">Color Centers</span><span class="prop-val" id="stat-color-centers">0%</span></div>
+                <div class="prop-row"><span class="prop-label">Damage</span><span class="prop-val" id="stat-damage">0%</span></div>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <h4>Statistics</h4>
+              <div id="experiment-stats">
+                <div class="prop-row"><span class="prop-label">Active photons</span><span class="prop-val" id="stat-active">0</span></div>
+                <div class="prop-row"><span class="prop-label">Transmitted</span><span class="prop-val" id="stat-transmitted">0</span></div>
+                <div class="prop-row"><span class="prop-label">Reflected</span><span class="prop-val" id="stat-reflected">0</span></div>
+                <div class="prop-row"><span class="prop-label">Absorbed</span><span class="prop-val" id="stat-absorbed">0</span></div>
+                <div class="prop-row"><span class="prop-label">Blocked</span><span class="prop-val" id="stat-blocked">0</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Tab 3: NMR & Vibrational Spectroscopy -->
+      <div class="content tab-content" id="tab-nmr" role="tabpanel">
+        <div class="experiment-layout">
+          <div class="experiment-main" style="flex:1">
+            <div class="viz-row" style="flex:1;gap:8px">
+              <div class="viz-panel" style="flex:1;min-height:350px">
+                <div class="panel-header">
+                  <h3>Solid-State MAS-NMR</h3>
+                </div>
+                <canvas id="nmr-canvas" style="width:100%;height:100%"></canvas>
+              </div>
+              <div class="viz-panel" style="flex:1;min-height:350px">
+                <div class="panel-header">
+                  <h3>Vibrational Spectrum</h3>
+                  <div class="panel-controls">
+                    <button class="panel-btn active" id="btn-vib-ir">IR</button>
+                    <button class="panel-btn" id="btn-vib-raman">Raman</button>
+                  </div>
+                </div>
+                <canvas id="vibrational-canvas" style="width:100%;height:100%"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="experiment-controls" style="max-width:280px">
+            <div class="control-group">
+              <h4>NMR Nucleus</h4>
+              <div class="btn-group" id="nmr-nuclei-btns" style="flex-wrap:wrap"></div>
+            </div>
+            <div class="control-group">
+              <h4>Display</h4>
+              <label class="control-label">
+                <div class="slider-row">
+                  <input type="checkbox" id="ctrl-nmr-overlay">
+                  <span>Overlay all minerals</span>
+                </div>
+              </label>
+              <label class="control-label">
+                <div class="slider-row">
+                  <input type="checkbox" id="ctrl-nmr-assign" checked>
+                  <span>Show peak assignments</span>
+                </div>
+              </label>
+            </div>
+            <div class="control-group">
+              <h4>NMR Spectrometer</h4>
+              <label class="control-label">
+                Magnetic Field B₀
+                <div class="slider-row">
+                  <input type="range" id="ctrl-nmr-field" min="2" max="23.5" value="9.4" step="0.1">
+                  <span class="slider-val" id="val-nmr-field">9.4 T</span>
+                </div>
+                <div class="thickness-presets">
+                  <button class="preset-btn" data-nmr-field="7.05">300 MHz</button>
+                  <button class="preset-btn" data-nmr-field="9.4">400 MHz</button>
+                  <button class="preset-btn" data-nmr-field="11.7">500 MHz</button>
+                  <button class="preset-btn" data-nmr-field="14.1">600 MHz</button>
+                  <button class="preset-btn" data-nmr-field="18.8">800 MHz</button>
+                  <button class="preset-btn" data-nmr-field="23.5">1 GHz</button>
+                </div>
+              </label>
+              <label class="control-label">
+                MAS Frequency
+                <div class="slider-row">
+                  <input type="range" id="ctrl-nmr-mas" min="0" max="60" value="10" step="1">
+                  <span class="slider-val" id="val-nmr-mas">10 kHz</span>
+                </div>
+              </label>
+              <label class="control-label">
+                Line Broadening
+                <div class="slider-row">
+                  <input type="range" id="ctrl-nmr-broad" min="0.2" max="5" value="1" step="0.1">
+                  <span class="slider-val" id="val-nmr-broad">1.0×</span>
+                </div>
+              </label>
+              <label class="control-label">
+                <div class="slider-row">
+                  <input type="checkbox" id="ctrl-nmr-sidebands" checked>
+                  <span>Show spinning sidebands</span>
+                </div>
+              </label>
+            </div>
+            <div class="control-group">
+              <h4>About This Nucleus</h4>
+              <div id="nmr-nucleus-info" class="thermal-stats-block"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/data.js?v=2"></script>
+  <script src="js/crystal.js?v=4"></script>
+  <script src="js/spectra.js"></script>
+  <script src="js/photon.js"></script>
+  <script src="js/experiment.js"></script>
+  <script src="js/screen.js"></script>
+  <script src="js/nmr.js"></script>
+  <script src="js/vibrational.js"></script>
+  <script src="js/fingerprint.js"></script>
+  <script src="js/app.js?v=4"></script>
+</body>
+</html>

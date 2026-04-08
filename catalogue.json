@@ -1,0 +1,11 @@
+{
+  "id": "gems",
+  "title": "Gems",
+  "oneLiner": "Gemstone explorer",
+  "demoUrl": "https://github.com/kylemath/gems",
+  "screenshot": "https://raw.githubusercontent.com/kylemath/gems/main/screenshot.png",
+  "kind": "project",
+  "categories": ["simulation", "webpage", "gems"],
+  "tags": ["simulation", "webpage", "gems"],
+  "status": "published"
+}
